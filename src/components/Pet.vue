@@ -3,6 +3,7 @@ import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import { onMounted, ref } from "vue";
 import PetActions from "./PetActions.vue";
+import background from "./backgrounds";
 
 const statusAtual = ref("fome");
 var sono = ref(100);
@@ -53,6 +54,9 @@ onMounted(() => {
 
 <template>
   <div class="pet-fundo">
+    <div class="background">
+      <img src="backgroundPadrao.png" />
+    </div>
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
       <Moreno
@@ -103,7 +107,7 @@ onMounted(() => {
 .pet-title {
   font-family: "Fredoka", sans-serif;
   padding: 10px;
-  font-size: large;
+  font-size: 40px;
 }
 
 .pet-status {
