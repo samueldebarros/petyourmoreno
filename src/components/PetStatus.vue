@@ -1,5 +1,5 @@
 <template>
-  <div class="petStatus-container">
+  <div class="petStatus-container" @click="$emit('click')">
     <div
       v-if="value >= 30"
       class="petStatus-fillG"

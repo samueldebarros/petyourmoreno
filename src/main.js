@@ -7,8 +7,11 @@ import {
   faBed,
   faShower,
   faGamepad,
+  faLemon,
+  faSoap,
+  faHand,
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faBurger, faGamepad, faBed, faShower);
+library.add(faBurger, faGamepad, faBed, faShower, faLemon, faSoap, faHand);
 
 createApp(App).mount("#app");
