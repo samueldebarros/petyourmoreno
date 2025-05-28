@@ -3,7 +3,7 @@ import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import { onMounted, ref } from "vue";
 import PetActions from "./PetActions.vue";
-import background from "./backgrounds";
+import background from "./backgrounds/backgroundPadrao.png";
 
 const statusAtual = ref("fome");
 var sono = ref(100);
@@ -55,7 +55,7 @@ onMounted(() => {
 <template>
   <div class="pet-fundo">
     <div class="background">
-      <img src="backgroundPadrao.png" />
+      <!-- <img src="./backgrounds/backgroundPadrao.png" /> deixei comentado pra testar os status dele-->
     </div>
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
