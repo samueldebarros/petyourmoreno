@@ -1,13 +1,38 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import Pet from './Pet.vue'
+
+const jogando = ref(false)
+
+function iniciarJogo() {
+  jogando.value = true
+}
+</script>
+
+
 
 <template>
   <div>
-    <div class="menu-fundo">
+    <div v-if="!jogando" class="menu-fundo">
       <h1 class="menu-title">PET YOUR MORENO</h1>
-      <div>
-        <button class="menu-botao">JOGAR</button>
-        <button class="menu-botao">OPÇÕES</button>
-      </div>
+      <div class="menu-linha"></div>
+      <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
+      <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
+
+
+
+        <button class="menu-botao" @click="iniciarJogo">
+          🎮 JOGAR
+        </button>
+        <button class="menu-botao">
+          ⚙️ OPÇÕES
+        </button>
+
+
+    </div>
+
+    <div v-else>
+      <Pet @voltarMenu="jogando = false" />
     </div>
   </div>
 </template>
@@ -15,13 +40,49 @@
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500&family=Nunito:wght@400&display=swap");
 
+
 .menu-fundo {
-  background-color: #219ebc;
+  background: linear-gradient(135deg, #219ebc, #8ecae6);
   width: 100vw;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
+  animation: fadeIn 1s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes flutuar {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0); }
+}
+
+.bolha {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  filter: blur(30px);
+  animation: flutuar 6s ease-in-out infinite;
+}
+
+
+.menu-fundo::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: 10%;
+  left: -100px;
+  filter: blur(50px);
 }
 
 .menu-title {
@@ -29,9 +90,10 @@
   display: flex;
   justify-content: center;
   padding: 15svh 0;
-  font-size: 50px;
   text-align: center;
   font-size: clamp(24px, 6vw, 50px);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
 }
 
 .menu-botao {
@@ -39,25 +101,44 @@
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin: 15px auto;
+  margin: 10px 0;
   font-family: "Fredoka", sans-serif;
   font-size: 20px;
   padding: 10px;
-  border: none;
+  border: 2px solid #219ebc;;
   border-radius: 10px;
-  background-color: #8ecae6;
   color: #023047;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  background: linear-gradient(45deg, #8ecae6, #83daf0);
+  box-shadow: 4px 4px 10px rgba(2, 48, 71, 0.2);
+
 }
 
 .menu-botao:hover {
   background-color: #83daf0;
-  transform: scale(1.05);
+  transform: scale(1.05)  rotate(-2deg);
+  animation: pulse 0.6s infinite;
+
 }
 
 .menu-botao:active {
   background-color: #bcebf7;
   transform: scale(0.95);
+  transform: scale(0.95);
+  filter: brightness(1.1);
 }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.menu-linha {
+  width: 60%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 20px auto;
+  border-radius: 2px;
+}
+
 </style>

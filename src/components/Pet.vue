@@ -10,6 +10,12 @@ var fome = ref(100);
 var diversao = ref(100);
 var higiene = ref(100);
 
+const emit = defineEmits(['voltarMenu'])
+
+function voltarParaMenu() {
+  emit('voltarMenu')
+}
+
 function menosStatus(status1, status2, status3, status4) {
   status1.value -= 3;
   status2.value -= 3;
@@ -26,6 +32,8 @@ onMounted(() => {
 
 <template>
   <div class="pet-fundo">
+    <button class="voltar-botao" @click="voltarParaMenu" aria-label="Voltar ao menu">⚙️</button>
+
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
     <Moreno
@@ -91,5 +99,21 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.voltar-botao {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: transform 0.2s ease;
+}
+
+.voltar-botao:hover {
+  transform: rotate(20deg) scale(1.1);
 }
 </style>
