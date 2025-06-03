@@ -41,15 +41,55 @@ const spriteAtual = computed(() => {
 </script>
 
 <template>
-  <div>
-    <img
+
+
+  
+  <div class="container-sprite">
+    <transition name="fade" mode="out-in">
+    <img class="pet-sprite"
       :src="spriteAtual"
+      :key="spriteAtual"
       width="600"
       height="800"
       alt="Sprite"
       ref="morenoPet"
     />
-  </div>
+    </transition>
+    </div>
+
 </template>
 
-<style></style>
+
+<style>
+
+.fade-enter-active, .fade-leave-active{
+  transition: opacity 0.05s ease;
+}
+
+.fade-enter-from, .fade-leave-to{
+  opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from{
+  opacity: 1;
+}
+
+.container-sprite{
+  width: 120%;
+  height: 120%;
+  position: absolute;
+  display: flex; 
+  justify-content: center;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pet-sprite {
+  top: 0;
+  left: 0;
+  object-fit: contain;
+}
+
+</style>

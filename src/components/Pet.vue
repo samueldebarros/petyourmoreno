@@ -99,7 +99,7 @@ onMounted(async () => {
       <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
     </div>
 
-    <Background></Background>
+    <Background :dormindo="statusAtual === 'sono'" ></Background>
 
     <PetActions ref="actionRef" :status="statusAtual" />
   </div>
@@ -139,9 +139,11 @@ onMounted(async () => {
 
 .pet-sprite {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  object-fit: contain;
 }
 
 .voltar-botao {
@@ -159,4 +161,5 @@ onMounted(async () => {
 .voltar-botao:hover {
   transform: rotate(20deg) scale(1.1);
 }
+
 </style>
