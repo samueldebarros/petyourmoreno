@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import morenoComSono from "./morenoSprites/morenoComSono.png";
 import morenoFaminto from "./morenoSprites/morenoFaminto.png";
 import morenoQuerendoCarinho from "./morenoSprites/morenoQuerendoCarinho.png";
@@ -42,7 +42,13 @@ const spriteAtual = computed(() => {
 
 <template>
   <div>
-    <img :src="spriteAtual" width="600" height="800" alt="Sprite" />
+    <img
+      :src="spriteAtual"
+      width="600"
+      height="800"
+      alt="Sprite"
+      ref="morenoPet"
+    />
   </div>
 </template>
 

@@ -3,7 +3,7 @@ import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 
 const statusAtual = ref("fome");
 const actionRef = ref(null);
@@ -26,32 +26,38 @@ function menosStatus(status1, status2, status3, status4) {
   status3.value -= 3;
   status4.value -= 3;
 }
+setInterval(() => menosStatus(sono, fome, diversao, higiene), 1000);
+onMounted(async () => {
+  await nextTick();
 
-onMounted(() => {
-  setInterval(() => menosStatus(sono, fome, diversao, higiene), 3000);
+  const actionEl = actionRef.value?.actionItem;
+  const petEl = petRef.value?.morenoPet;
 
-  const actionEl = actionRef.value.actionItem;
-  const petEl = petRef.value.morenoPet;
+  if (!actionEl || !petEl) {
+    console.error("Referências não carregadas:", { actionEl, petEl });
+    return;
+  }
 
   actionEl.addEventListener("dragstart", (event) => {});
-
   petEl.addEventListener("dragover", (event) => {
     event.preventDefault();
   });
 
   petEl.addEventListener("drop", (event) => {
     event.preventDefault();
-    if (statusAtual.value === "fome") {
-      fome.value += 20;
-    }
-    if (statusAtual.value === "diversao") {
-      diversao.value += 20;
-    }
-    if (statusAtual.value === "higiene") {
-      higiene.value += 20;
-    }
-    if (statusAtual.value === "sono") {
-      sono.value += 20;
+    switch (statusAtual.value) {
+      case "fome":
+        fome.value += 20;
+        break;
+      case "diversao":
+        diversao.value += 20;
+        break;
+      case "higiene":
+        higiene.value += 20;
+        break;
+      case "sono":
+        sono.value += 20;
+        break;
     }
   });
 });
@@ -69,7 +75,13 @@ onMounted(() => {
 
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
-      <Moreno :fome="fome" :diversao="diversao" :sono="sono" :higiene="higiene">
+      <Moreno
+        :fome="fome"
+        :diversao="diversao"
+        :sono="sono"
+        :higiene="higiene"
+        ref="petRef"
+      >
       </Moreno>
     </div>
     <div class="pet-status">
@@ -87,7 +99,7 @@ onMounted(() => {
       <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
     </div>
 
-    <Background :dormindo="bed"></Background>
+    <Background></Background>
 
     <PetActions ref="actionRef" :status="statusAtual" />
   </div>
