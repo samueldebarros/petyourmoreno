@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import Pet from './Pet.vue'
 import MiniGame from './MiniGame.vue'
+import gifMoreno from './imagens/morenoPilotando.gif'
 
 const telaAtual = ref('menu')
 
@@ -19,6 +20,7 @@ function iniciarMiniGame() {
 <template>
   <div>
     <div v-if="telaAtual === 'menu'" class="menu-fundo">
+      <img :src=gifMoreno class="gifDoMoreno">
       <h1 class="menu-title">PET YOUR MORENO</h1>
       <div class="menu-linha"></div>
       <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
@@ -46,7 +48,7 @@ function iniciarMiniGame() {
 
 
 .menu-fundo {
-  background: linear-gradient(135deg, #219ebc, #8ecae6);
+  background: linear-gradient(#219ebc, #9acbe2);
   width: 100vw;
   height: 100vh;
   position: fixed;
@@ -93,11 +95,11 @@ function iniciarMiniGame() {
   font-family: "Fredoka", sans-serif;
   display: flex;
   justify-content: center;
-  padding: 15svh 0;
+  padding: 0px 0px 0px 0px;
   text-align: center;
   font-size: clamp(24px, 6vw, 50px);
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  margin-bottom: 30px;
+  margin-bottom: 3px;
 }
 
 .menu-botao {
@@ -105,7 +107,7 @@ function iniciarMiniGame() {
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin: 10px 0;
+  margin: 0px 0px 0px;
   font-family: "Fredoka", sans-serif;
   font-size: 20px;
   padding: 10px;
@@ -143,6 +145,14 @@ function iniciarMiniGame() {
   background: rgba(255, 255, 255, 0.3);
   margin: 20px auto;
   border-radius: 2px;
+}
+
+.gifDoMoreno{
+  width: 350px;
+  height: 250px;
+  object-fit: contain;
+  z-index: 2;
+  display: flex;
 }
 
 </style>

@@ -45,16 +45,13 @@ const spriteAtual = computed(() => {
 
   
   <div class="container-sprite">
-    <transition name="fade" mode="out-in">
     <img class="pet-sprite"
       :src="spriteAtual"
-      :key="spriteAtual"
       width="600"
       height="800"
       alt="Sprite"
       ref="morenoPet"
     />
-    </transition>
     </div>
 
 </template>
