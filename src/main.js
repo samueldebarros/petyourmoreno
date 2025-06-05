@@ -10,8 +10,20 @@ import {
   faLemon,
   faSoap,
   faHand,
+  faCoins,
+  faStore,
 } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faBurger, faGamepad, faBed, faShower, faLemon, faSoap, faHand);
+library.add(
+  faBurger,
+  faGamepad,
+  faBed,
+  faShower,
+  faLemon,
+  faSoap,
+  faHand,
+  faCoins,
+  faStore
+);
 
 createApp(App).mount("#app");

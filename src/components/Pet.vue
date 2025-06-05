@@ -4,6 +4,10 @@ import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
+import Store from "./Store.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+const storeStatus = ref(0);
 
 const statusAtual = ref("fome");
 const actionRef = ref(null);
@@ -121,6 +125,16 @@ onMounted(async () => {
   </div>
 
   <PetActions ref="actionRef" :status="statusAtual" />
+
+  <div class="store-icon">
+    <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1" />
+  </div>
+
+  <Store
+    v-if="storeStatus === 1"
+    :storeStatus="storeStatus"
+    @fechar="storeStatus = 0"
+  ></Store>
 </template>
 
 <style scoped>
@@ -220,5 +234,22 @@ onMounted(async () => {
 
 .game-over-content button:hover {
   transform: scale(1.1);
+}
+
+.store-icon {
+  position: fixed;
+  font-size: 60px;
+  bottom: 10px;
+  left: 40px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.store-icon:hover {
+  transform: scale(1.05);
+}
+
+.store-icon:active {
+  transform: scale(0.95);
 }
 </style>
