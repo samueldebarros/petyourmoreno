@@ -1,23 +1,24 @@
 <script setup>
+import {onMounted, ref, nextTick} from "vue";
 import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
-import { onMounted, ref, nextTick } from "vue";
 
 const statusAtual = ref("fome");
 const actionRef = ref(null);
 const petRef = ref(null);
 
-var sono = ref(100);
-var fome = ref(100);
-var diversao = ref(100);
-var higiene = ref(100);
+const sono = ref(100);
+const fome = ref(100);
+const diversao = ref(100);
+const higiene = ref(100);
 
-const emit = defineEmits(['voltarMenu'])
+const emit = defineEmits(['voltarMenu']);
+const gameOver = ref(false);
 
 function voltarParaMenu() {
-  emit('voltarMenu')
+  emit('voltarMenu');
 }
 
 function menosStatus(status1, status2, status3, status4) {
@@ -26,7 +27,17 @@ function menosStatus(status1, status2, status3, status4) {
   status3.value -= 3;
   status4.value -= 3;
 }
-setInterval(() => menosStatus(sono, fome, diversao, higiene), 1000);
+
+setInterval(() => menosStatus(sono, fome, diversao, higiene), 100);
+
+function handleGameOver() {
+  gameOver.value = true;
+}
+
+function reiniciarJogo() {
+  window.location.reload();
+}
+
 onMounted(async () => {
   await nextTick();
 
@@ -34,11 +45,12 @@ onMounted(async () => {
   const petEl = petRef.value?.morenoPet;
 
   if (!actionEl || !petEl) {
-    console.error("Referências não carregadas:", { actionEl, petEl });
+    console.error("Referências não carregadas:", {actionEl, petEl});
     return;
   }
 
-  actionEl.addEventListener("dragstart", (event) => {});
+  actionEl.addEventListener("dragstart", (event) => {
+  });
   petEl.addEventListener("dragover", (event) => {
     event.preventDefault();
   });
@@ -66,9 +78,9 @@ onMounted(async () => {
 <template>
   <div class="pet-fundo">
     <button
-      class="voltar-botao"
-      @click="voltarParaMenu"
-      aria-label="Voltar ao menu"
+        class="voltar-botao"
+        @click="voltarParaMenu"
+        aria-label="Voltar ao menu"
     >
       ⚙️
     </button>
@@ -76,44 +88,48 @@ onMounted(async () => {
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
       <Moreno
-        :fome="fome"
-        :diversao="diversao"
-        :sono="sono"
-        :higiene="higiene"
-        ref="petRef"
-      >
-      </Moreno>
+          :fome="fome"
+          :diversao="diversao"
+          :sono="sono"
+          :higiene="higiene"
+          ref="petRef"
+          @morreu="handleGameOver"
+      />
     </div>
     <div class="pet-status">
-      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'" />
+      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'"/>
       <PetStatus
-        :value="diversao"
-        icon="gamepad"
-        @click="statusAtual = 'diversao'"
+          :value="diversao"
+          icon="gamepad"
+          @click="statusAtual = 'diversao'"
       />
       <PetStatus
-        :value="higiene"
-        icon="shower"
-        @click="statusAtual = 'higiene'"
+          :value="higiene"
+          icon="shower"
+          @click="statusAtual = 'higiene'"
       />
-      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
+      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'"/>
     </div>
 
     <Background
-    :dormindo="bed"
+        :dormindo="bed"
     ></Background>
 
     <PetActions></PetActions>
 
+    <div v-if="gameOver" class="game-over-overlay">
+      <div class="game-over-content">
+        <h1>Game Over</h1>
+        <button @click="reiniciarJogo">Reiniciar</button>
+      </div>
     </div>
 
-
-
-
-    <Background :dormindo="statusAtual === 'sono'" ></Background>
-
-    <PetActions ref="actionRef" :status="statusAtual" />
   </div>
+
+
+  <Background :dormindo="statusAtual === 'sono'"></Background>
+
+  <PetActions ref="actionRef" :status="statusAtual"/>
 </template>
 
 <style scoped>
@@ -173,4 +189,45 @@ onMounted(async () => {
   transform: rotate(20deg) scale(1.1);
 }
 
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.game-over-content {
+  text-align: center;
+  background: #333;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 10px #fff;
+}
+
+.game-over-content h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.game-over-content button {
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  background: #fff;
+  color: #333;
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.game-over-content button:hover {
+  transform: scale(1.1);
+}
 </style>

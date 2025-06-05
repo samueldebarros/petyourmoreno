@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import Pet from './Pet.vue'
 import MiniGame from './MiniGame.vue'
 import gifMoreno from './imagens/morenoPilotando.gif'
@@ -16,17 +16,15 @@ function iniciarMiniGame() {
 </script>
 
 
-
 <template>
   <div>
     <div v-if="!jogando" class="menu-fundo">
-    <div v-if="telaAtual === 'menu'" class="menu-fundo">
-      <img :src=gifMoreno class="gifDoMoreno">
-      <h1 class="menu-title">PET YOUR MORENO</h1>
-      <div class="menu-linha"></div>
-      <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
-      <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
-
+      <div v-if="telaAtual === 'menu'" class="menu-fundo">
+        <img :src=gifMoreno class="gifDoMoreno">
+        <h1 class="menu-title">PET YOUR MORENO</h1>
+        <div class="menu-linha"></div>
+        <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
+        <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
 
 
         <button class="menu-botao" @click="iniciarJogo">
@@ -37,10 +35,11 @@ function iniciarMiniGame() {
         </button>
 
 
+      </div>
     </div>
 
     <div v-else>
-      <Pet @voltarMenu="jogando = false" />
+      <Pet @voltarMenu="jogando = false"/>
       <div class="menu-linha"></div>
       <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
       <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
@@ -56,8 +55,8 @@ function iniciarMiniGame() {
       </button>
     </div>
 
-    <Pet v-else-if="telaAtual === 'jogo'" @voltarMenu="telaAtual = 'menu'" />
-    <MiniGame v-else-if="telaAtual === 'minigame'" @back="telaAtual = 'menu'" />
+    <Pet v-if="telaAtual === 'jogo'" @voltarMenu="telaAtual = 'menu'"/>
+    <MiniGame v-else-if="telaAtual === 'minigame'" @back="telaAtual = 'menu'"/>
   </div>
 </template>
 
@@ -79,14 +78,28 @@ function iniciarMiniGame() {
   justify-content: center;
   align-items: center;
 }
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 @keyframes flutuar {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .bolha {
@@ -142,7 +155,7 @@ function iniciarMiniGame() {
 
 .menu-botao:hover {
   background-color: #83daf0;
-  transform: scale(1.05)  rotate(-2deg);
+  transform: scale(1.05) rotate(-2deg);
   animation: pulse 0.6s infinite;
 
 }
@@ -153,11 +166,19 @@ function iniciarMiniGame() {
   transform: scale(0.95);
   filter: brightness(1.1);
 }
+
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
+
 .menu-linha {
   width: 60%;
   height: 2px;
@@ -166,7 +187,7 @@ function iniciarMiniGame() {
   border-radius: 2px;
 }
 
-.gifDoMoreno{
+.gifDoMoreno {
   width: 350px;
   height: 250px;
   object-fit: contain;
