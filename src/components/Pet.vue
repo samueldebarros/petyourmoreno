@@ -1,9 +1,13 @@
 <script setup>
 import PetStatus from "./PetStatus.vue";
-import Moreno from "./Moreno.vue"
-import Background from "./Background.vue"
+import Moreno from "./Moreno.vue";
+import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
+
+const statusAtual = ref("fome");
+const actionRef = ref(null);
+const petRef = ref(null);
 
 var sono = ref(100);
 var fome = ref(100);
@@ -22,44 +26,94 @@ function menosStatus(status1, status2, status3, status4) {
   status3.value -= 3;
   status4.value -= 3;
 }
+setInterval(() => menosStatus(sono, fome, diversao, higiene), 1000);
+onMounted(async () => {
+  await nextTick();
 
-onMounted(() => {
-  setInterval(() => menosStatus(sono, fome, diversao, higiene), 3000);
+  const actionEl = actionRef.value?.actionItem;
+  const petEl = petRef.value?.morenoPet;
+
+  if (!actionEl || !petEl) {
+    console.error("Referências não carregadas:", { actionEl, petEl });
+    return;
+  }
+
+  actionEl.addEventListener("dragstart", (event) => {});
+  petEl.addEventListener("dragover", (event) => {
+    event.preventDefault();
+  });
+
+  petEl.addEventListener("drop", (event) => {
+    event.preventDefault();
+    switch (statusAtual.value) {
+      case "fome":
+        fome.value += 20;
+        break;
+      case "diversao":
+        diversao.value += 20;
+        break;
+      case "higiene":
+        higiene.value += 20;
+        break;
+      case "sono":
+        sono.value += 20;
+        break;
+    }
+  });
 });
-
-
 </script>
 
 <template>
   <div class="pet-fundo">
-    <button class="voltar-botao" @click="voltarParaMenu" aria-label="Voltar ao menu">⚙️</button>
+    <button
+      class="voltar-botao"
+      @click="voltarParaMenu"
+      aria-label="Voltar ao menu"
+    >
+      ⚙️
+    </button>
 
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
-    <Moreno
-     :fome="fome" 
-     :diversao="diversao" 
-     :sono="sono" 
-     :higiene="higiene">
-    </Moreno>
+      <Moreno
+        :fome="fome"
+        :diversao="diversao"
+        :sono="sono"
+        :higiene="higiene"
+        ref="petRef"
+      >
+      </Moreno>
     </div>
     <div class="pet-status">
-      <PetStatus :value="fome" icon="burger" />
-      <PetStatus :value="diversao" icon="gamepad" />
-      <PetStatus :value="higiene" icon="shower" />
-      <PetStatus :value="sono" icon="bed" />
+      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'" />
+      <PetStatus
+        :value="diversao"
+        icon="gamepad"
+        @click="statusAtual = 'diversao'"
+      />
+      <PetStatus
+        :value="higiene"
+        icon="shower"
+        @click="statusAtual = 'higiene'"
+      />
+      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
     </div>
-    
+
     <Background
     :dormindo="bed"
     ></Background>
 
     <PetActions></PetActions>
-    
+
     </div>
-    
-    
- 
+
+
+
+
+    <Background :dormindo="statusAtual === 'sono'" ></Background>
+
+    <PetActions ref="actionRef" :status="statusAtual" />
+  </div>
 </template>
 
 <style scoped>
@@ -83,7 +137,7 @@ onMounted(() => {
   font-family: "Fredoka", sans-serif;
   padding: 10px;
   font-size: 40px;
-  color:white;
+  color: white;
 }
 
 .pet-status {
@@ -94,11 +148,13 @@ onMounted(() => {
   gap: 20px;
 }
 
-.pet-sprite{
-  position:absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+.pet-sprite {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  object-fit: contain;
 }
 
 .voltar-botao {
@@ -116,4 +172,5 @@ onMounted(() => {
 .voltar-botao:hover {
   transform: rotate(20deg) scale(1.1);
 }
+
 </style>

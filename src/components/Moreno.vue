@@ -23,7 +23,7 @@ if (props.fome<30 && props.sono<30 && props.diversao<30 && props.higiene<30 ){
 }
 if (props.fome<30){
     return morenoFaminto;
-} 
+}
 else if (props.sono<30){
     return morenoComSono;
 }
@@ -43,11 +43,51 @@ else {
 
 <template>
 
-<div>
-
-<img :src="spriteAtual" width="600" height="800" alt="Sprite">
 
 
-</div>
+  <div class="container-sprite">
+    <img class="pet-sprite"
+      :src="spriteAtual"
+      width="600"
+      height="800"
+      alt="Sprite"
+      ref="morenoPet"
+    />
+    </div>
 
 </template>
+
+
+<style>
+
+.fade-enter-active, .fade-leave-active{
+  transition: opacity 0.05s ease;
+}
+
+.fade-enter-from, .fade-leave-to{
+  opacity: 0;
+}
+
+.fade-enter-to, .fade-leave-from{
+  opacity: 1;
+}
+
+.container-sprite{
+  width: 120%;
+  height: 120%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.pet-sprite {
+  top: 0;
+  left: 0;
+  object-fit: contain;
+}
+
+</style>

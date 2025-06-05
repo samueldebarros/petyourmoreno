@@ -3,6 +3,7 @@
 import backgroundPadrao from './backgrounds/backgroundPadrao.png';
 import backgroundDormir from './backgrounds/backgroundDormir.png';
 import {computed} from 'vue';
+import PetActions from './PetActions.vue';
 
 const props = defineProps ({
 dormindo: Boolean,
@@ -18,9 +19,10 @@ const fundoAtual = computed(() =>{
 
 <template>
 
-<div>
-    <img :src="fundoAtual" alt="Background" class="fundo">
-</div>
+
+<transition name="fade">
+    <img :src="fundoAtual" :key="fundoAtual" alt="Background" class="fundo" >
+</transition>
 
 </template>
 
@@ -37,7 +39,15 @@ left: 50%;
 transform: translate(-50%, -50%);
 }
 
+.fade-enter-active, .fade-leave-active{
+    transition: opacity 0.5s ease;
+}
 
+.fade-enter-from, .fade-leave-to{
+    opacity: 0;
+}
 
-
+.fade-enter-to, .fade-leave-from{
+    opacity: 1;
+}
 </style>
