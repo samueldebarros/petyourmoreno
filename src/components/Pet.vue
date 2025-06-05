@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, nextTick} from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
@@ -14,21 +14,21 @@ const fome = ref(100);
 const diversao = ref(100);
 const higiene = ref(100);
 
-const emit = defineEmits(['voltarMenu']);
+const emit = defineEmits(["voltarMenu"]);
 const gameOver = ref(false);
 
 function voltarParaMenu() {
-  emit('voltarMenu');
+  emit("voltarMenu");
 }
 
 function menosStatus(status1, status2, status3, status4) {
-  status1.value -= 3;
-  status2.value -= 3;
-  status3.value -= 3;
-  status4.value -= 3;
+  status1.value -= 1;
+  status2.value -= 1;
+  status3.value -= 1;
+  status4.value -= 1;
 }
 
-setInterval(() => menosStatus(sono, fome, diversao, higiene), 100);
+setInterval(() => menosStatus(sono, fome, diversao, higiene), 500);
 
 function handleGameOver() {
   gameOver.value = true;
@@ -45,12 +45,11 @@ onMounted(async () => {
   const petEl = petRef.value?.morenoPet;
 
   if (!actionEl || !petEl) {
-    console.error("Referências não carregadas:", {actionEl, petEl});
+    console.error("Referências não carregadas:", { actionEl, petEl });
     return;
   }
 
-  actionEl.addEventListener("dragstart", (event) => {
-  });
+  actionEl.addEventListener("dragstart", (event) => {});
   petEl.addEventListener("dragover", (event) => {
     event.preventDefault();
   });
@@ -78,9 +77,9 @@ onMounted(async () => {
 <template>
   <div class="pet-fundo">
     <button
-        class="voltar-botao"
-        @click="voltarParaMenu"
-        aria-label="Voltar ao menu"
+      class="voltar-botao"
+      @click="voltarParaMenu"
+      aria-label="Voltar ao menu"
     >
       ⚙️
     </button>
@@ -88,34 +87,30 @@ onMounted(async () => {
     <div class="pet-title">Pet Your Moreno</div>
     <div class="pet-sprite">
       <Moreno
-          :fome="fome"
-          :diversao="diversao"
-          :sono="sono"
-          :higiene="higiene"
-          ref="petRef"
-          @morreu="handleGameOver"
+        :fome="fome"
+        :diversao="diversao"
+        :sono="sono"
+        :higiene="higiene"
+        ref="petRef"
+        @morreu="handleGameOver"
       />
     </div>
     <div class="pet-status">
-      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'"/>
+      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'" />
       <PetStatus
-          :value="diversao"
-          icon="gamepad"
-          @click="statusAtual = 'diversao'"
+        :value="diversao"
+        icon="gamepad"
+        @click="statusAtual = 'diversao'"
       />
       <PetStatus
-          :value="higiene"
-          icon="shower"
-          @click="statusAtual = 'higiene'"
+        :value="higiene"
+        icon="shower"
+        @click="statusAtual = 'higiene'"
       />
-      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'"/>
+      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
     </div>
 
-    <Background
-        :dormindo="bed"
-    ></Background>
-
-    <PetActions></PetActions>
+    <Background :dormindo="statusAtual === 'sono'" />
 
     <div v-if="gameOver" class="game-over-overlay">
       <div class="game-over-content">
@@ -123,13 +118,9 @@ onMounted(async () => {
         <button @click="reiniciarJogo">Reiniciar</button>
       </div>
     </div>
-
   </div>
 
-
-  <Background :dormindo="statusAtual === 'sono'"></Background>
-
-  <PetActions ref="actionRef" :status="statusAtual"/>
+  <PetActions ref="actionRef" :status="statusAtual" />
 </template>
 
 <style scoped>
