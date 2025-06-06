@@ -12,6 +12,11 @@ import {
   faHand,
   faCoins,
   faStore,
+  faBreadSlice,
+  faPizzaSlice,
+  faIceCream,
+  faMotorcycle,
+  faCookie,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -23,7 +28,12 @@ library.add(
   faSoap,
   faHand,
   faCoins,
-  faStore
+  faStore,
+  faBreadSlice,
+  faPizzaSlice,
+  faIceCream,
+  faMotorcycle,
+  faCookie
 );
 
 createApp(App).mount("#app");

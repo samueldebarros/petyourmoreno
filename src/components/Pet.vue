@@ -8,10 +8,26 @@ import Store from "./Store.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const storeStatus = ref(0);
+const itemEquipado = ref({ imagem: "lemon", nome: "Limão" });
+
+function comprarProduto(index, qtd) {
+  produtos.value[index].owned += qtd;
+}
+
+const produtos = ref([
+  { nome: "Limão", imagem: "lemon", preco: 5, owned: 0 },
+  { nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0 },
+  { nome: "Cookie", imagem: "cookie", preco: 15, owned: 0 },
+  { nome: "Sorvete", imagem: "ice-cream", preco: 20, owned: 0 },
+  { nome: "Pizza", imagem: "pizza-slice", preco: 25, owned: 0 },
+  { nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0 },
+  { nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0 },
+]);
 
 const statusAtual = ref("fome");
 const actionRef = ref(null);
 const petRef = ref(null);
+const isHovering = ref(false);
 
 const sono = ref(100);
 const fome = ref(100);
@@ -53,28 +69,47 @@ onMounted(async () => {
     return;
   }
 
-  actionEl.addEventListener("dragstart", (event) => {});
+  actionEl.addEventListener("dragstart", (event) => {
+    console.log(itemEquipado);
+  });
   petEl.addEventListener("dragover", (event) => {
     event.preventDefault();
   });
 
+  petEl.addEventListener("dragenter", () => {
+    isHovering.value = true;
+  });
+
+  petEl.addEventListener("dragleave", () => {
+    isHovering.value = false;
+  });
+
   petEl.addEventListener("drop", (event) => {
     event.preventDefault();
+    isHovering.value = false;
+
     switch (statusAtual.value) {
       case "fome":
         fome.value += 20;
-        break;
-      case "diversao":
-        diversao.value += 20;
-        break;
-      case "higiene":
-        higiene.value += 20;
         break;
       case "sono":
         sono.value += 20;
         break;
     }
   });
+
+  setInterval(() => {
+    if (isHovering.value) {
+      switch (statusAtual.value) {
+        case "diversao":
+          diversao.value += 1;
+          break;
+        case "higiene":
+          higiene.value += 1;
+          break;
+      }
+    }
+  }, 100);
 });
 </script>
 
@@ -124,7 +159,11 @@ onMounted(async () => {
     </div>
   </div>
 
-  <PetActions ref="actionRef" :status="statusAtual" />
+  <PetActions
+    ref="actionRef"
+    :status="statusAtual"
+    :item-equipado="itemEquipado"
+  />
 
   <div class="store-icon">
     <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1" />
@@ -133,6 +172,9 @@ onMounted(async () => {
   <Store
     v-if="storeStatus === 1"
     :storeStatus="storeStatus"
+    :produtos="produtos"
+    @equiparItem="itemEquipado = $event"
+    @comprar="comprarProduto"
     @fechar="storeStatus = 0"
   ></Store>
 </template>

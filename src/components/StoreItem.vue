@@ -3,28 +3,43 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Pet from "./Pet.vue";
 import { onMounted, ref, computed } from "vue";
 
-const owned = ref(0);
+const emit = defineEmits(["equipar"]);
+
+function comprarItem() {
+  emit("comprar", 1);
+}
+
+function equiparItem() {
+  emit("equipar", { nome: props.nome, imagem: props.imagem });
+}
+
+const props = defineProps({
+  nome: String,
+  imagem: String,
+  preco: Number,
+  owned: Number,
+});
 </script>
 
 <template>
   <div class="store-item">
     <div class="store-item__image">
-      <font-awesome-icon :icon="['fas', 'lemon']" />
+      <font-awesome-icon :icon="['fas', imagem]" />
     </div>
-    <h3>LIMÃO(x{{ owned }})</h3>
+    <h3>{{ nome }}(x{{ owned }})</h3>
     <div class="store-item__price--container">
-      <h5 class="store-item__price">Preço: 10</h5>
+      <h5 class="store-item__price">Preço: {{ preco }}</h5>
       <font-awesome-icon
         style="color: rgb(202, 202, 26)"
         :icon="['fas', 'coins']"
       />
     </div>
-    <button class="store-item__button" v-if="owned === 0" @click="owned += 1">
+    <button class="store-item__button" v-if="owned === 0" @click="comprarItem">
       Comprar
     </button>
     <div class="store-item__button--container" v-else>
-      <button class="store-item__button" @click="owned += 1">Comprar</button>
-      <button class="store-item__button">Equipar</button>
+      <button class="store-item__button" @click="comprarItem">Comprar</button>
+      <button class="store-item__button" @click="equiparItem">Equipar</button>
     </div>
   </div>
 </template>
@@ -37,7 +52,7 @@ const owned = ref(0);
   flex-direction: column;
   width: 200px;
   min-height: 200px;
-  background-color: rgb(77, 216, 216);
+  background-color: #dad7cd;
   border-radius: 15px;
   margin: 10px;
   padding: 10px;
@@ -50,7 +65,7 @@ const owned = ref(0);
 
 .store-item:hover {
   transform: scale(1.05);
-  background-color: rgb(58, 224, 224);
+  background-color: #efd8c5;
 }
 
 .store-item__image {
@@ -63,7 +78,7 @@ const owned = ref(0);
 .store-item__button {
   height: 30px;
   border: none;
-  background-color: rgb(72, 206, 72);
+  background-color: #2a9d8f;
   border-radius: 10px;
   width: 100%;
   transition: transform 0.3s ease;
@@ -72,7 +87,7 @@ const owned = ref(0);
 
 .store-item__button:hover {
   transform: scale(1.05);
-  background-color: rgb(24, 204, 24);
+  background-color: #1e7368;
 }
 
 .store-item__price {

@@ -8,11 +8,17 @@ defineExpose({ actionItem });
 
 const props = defineProps({
   status: String,
+  itemEquipado: Object,
 });
 const actionImage = computed(() => {
+  if (
+    props.status === "fome" &&
+    props.itemEquipado &&
+    props.itemEquipado.imagem
+  ) {
+    return props.itemEquipado.imagem;
+  }
   switch (props.status) {
-    case "fome":
-      return "lemon";
     case "diversao":
       return "hand";
     case "higiene":

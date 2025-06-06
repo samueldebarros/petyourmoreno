@@ -6,9 +6,10 @@ import StoreItem from "./StoreItem.vue";
 
 const props = defineProps({
   storeStatus: Number,
+  produtos: Array,
 });
 
-const emit = defineEmits(["fechar"]);
+const emit = defineEmits(["fechar", "equiparItem"]);
 </script>
 
 <template>
@@ -20,18 +21,16 @@ const emit = defineEmits(["fechar"]);
       </div>
 
       <div class="store">
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
-        <StoreItem></StoreItem>
+        <StoreItem
+          v-for="(produto, index) in produtos"
+          :key="index"
+          :nome="produto.nome"
+          :imagem="produto.imagem"
+          :preco="produto.preco"
+          :owned="produto.owned"
+          @comprar="(qtd) => $emit('comprar', index, qtd)"
+          @equipar="emit('equiparItem', $event)"
+        />
       </div>
     </div>
   </div>
@@ -55,7 +54,7 @@ const emit = defineEmits(["fechar"]);
   z-index: 9999;
   max-width: 850px;
   width: 90vw;
-  background-color: rgba(49, 194, 151, 0.671);
+  background-color: #f4a261;
   padding: 20px;
   border-radius: 25px;
   display: flex;
