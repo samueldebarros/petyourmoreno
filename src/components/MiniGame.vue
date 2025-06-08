@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import {onMounted, onUnmounted, ref} from 'vue';
 
-const emit = defineEmits(['back']);
+const emit = defineEmits(['voltar', 'score']);
 const score = ref(0);
 const timeLeft = ref(30);
 const motos = ref([]);
@@ -16,7 +16,7 @@ function spawnMoto() {
   const top = Math.random() * 80;
   const isBroken = Math.random() < 0.2; // porcentagem de chance de aparecer bicicletas
 
-  motos.value.push({ id, left, top, isBroken });
+  motos.value.push({id, left, top, isBroken});
 
   setTimeout(() => {
     motos.value = motos.value.filter(m => m.id !== id);
@@ -28,6 +28,7 @@ function handleClick(id, isBroken) {
     gameOver.value = true;
     clearInterval(intervalId);
     clearInterval(timerId);
+    emit('score', score.value); // <-- Emitir score mesmo no game over
     return;
   }
 
@@ -43,6 +44,9 @@ onMounted(() => {
     } else {
       clearInterval(intervalId);
       clearInterval(timerId);
+      if (!gameOver.value) {
+        emit('score', score.value); // <-- Emitir score ao final
+      }
     }
   }, 1000);
 });
@@ -63,29 +67,29 @@ onUnmounted(() => {
 
     <div class="mini-game-area">
       <img
-        v-for="moto in motos"
-        :key="moto.id"
-        :src="moto.isBroken
+          v-for="moto in motos"
+          :key="moto.id"
+          :src="moto.isBroken
           ? 'https://cdn-icons-png.flaticon.com/512/3199/3199975.png'
           : 'https://cdn-icons-png.flaticon.com/512/2829/2829065.png'"
-        alt="moto"
-        class="moto"
-        :class="{ broken: moto.isBroken }"
-        :style="{ top: moto.top + '%', left: moto.left + '%' }"
-        @click="handleClick(moto.id, moto.isBroken)"
+          alt="moto"
+          class="moto"
+          :class="{ broken: moto.isBroken }"
+          :style="{ top: moto.top + '%', left: moto.left + '%' }"
+          @click="handleClick(moto.id, moto.isBroken)"
       />
     </div>
 
     <div v-if="timeLeft === 0 && !gameOver" class="mini-game-end">
       <h3>Fim de jogo!</h3>
       <p>Você pegou {{ score }} motos. Moreno ficou feliz!</p>
-      <button class="menu-botao" @click="emit('back')">Voltar ao Menu</button>
+      <button @click="emit('voltar')">Voltar</button>
     </div>
 
     <div v-if="gameOver" class="mini-game-end game-over">
       <h3>Game Over!</h3>
       <p>Moreno não gosta de bicicletas 😖</p>
-      <button class="menu-botao" @click="emit('back')">Voltar ao Menu</button>
+      <button @click="emit('voltar')">Voltar</button>
     </div>
   </div>
 </template>

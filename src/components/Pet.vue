@@ -1,27 +1,34 @@
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
+import {onMounted, ref, nextTick} from "vue";
 import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
 import Store from "./Store.vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import MiniGame from './MiniGame.vue'
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const storeStatus = ref(0);
-const itemEquipado = ref({ imagem: "lemon", nome: "Limão" });
+const itemEquipado = ref({imagem: "lemon", nome: "Limão"});
 
 function comprarProduto(index, qtd) {
   produtos.value[index].owned += qtd;
 }
 
+const mostrandoMiniGame = ref(false);
+
+function entrarMiniGame() {
+  mostrandoMiniGame.value = true;
+}
+
 const produtos = ref([
-  { nome: "Limão", imagem: "lemon", preco: 5, owned: 0 },
-  { nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0 },
-  { nome: "Cookie", imagem: "cookie", preco: 15, owned: 0 },
-  { nome: "Sorvete", imagem: "ice-cream", preco: 20, owned: 0 },
-  { nome: "Pizza", imagem: "pizza-slice", preco: 25, owned: 0 },
-  { nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0 },
-  { nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0 },
+  {nome: "Limão", imagem: "lemon", preco: 5, owned: 0},
+  {nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0},
+  {nome: "Cookie", imagem: "cookie", preco: 15, owned: 0},
+  {nome: "Sorvete", imagem: "ice-cream", preco: 20, owned: 0},
+  {nome: "Pizza", imagem: "pizza-slice", preco: 25, owned: 0},
+  {nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0},
+  {nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0},
 ]);
 
 const statusAtual = ref("fome");
@@ -34,7 +41,13 @@ const fome = ref(100);
 const diversao = ref(100);
 const higiene = ref(100);
 
-const emit = defineEmits(["voltarMenu"]);
+const score = ref(0);
+
+function atualizarScore(novaPontuacao) {
+  score.value += novaPontuacao;
+}
+
+const emit = defineEmits(["voltarMenu", "entrarMiniGame"]);
 const gameOver = ref(false);
 
 function voltarParaMenu() {
@@ -65,7 +78,7 @@ onMounted(async () => {
   const petEl = petRef.value?.morenoPet;
 
   if (!actionEl || !petEl) {
-    console.error("Referências não carregadas:", { actionEl, petEl });
+    console.error("Referências não carregadas:", {actionEl, petEl});
     return;
   }
 
@@ -111,72 +124,90 @@ onMounted(async () => {
     }
   }, 100);
 });
+
+defineProps({
+  score: {
+    type: Number,
+    default: 0,
+  },
+});
 </script>
 
 <template>
-  <div class="pet-fundo">
-    <button
-      class="voltar-botao"
-      @click="voltarParaMenu"
-      aria-label="Voltar ao menu"
-    >
-      ⚙️
-    </button>
+  <div v-if="!mostrandoMiniGame">
+    <div class="pet-fundo">
+      <button
+          class="voltar-botao"
+          @click="voltarParaMenu"
+          aria-label="Voltar ao menu"
+      >
+        ⚙️
+      </button>
 
-    <div class="pet-title">Pet Your Moreno</div>
-    <div class="pet-sprite">
-      <Moreno
-        :fome="fome"
-        :diversao="diversao"
-        :sono="sono"
-        :higiene="higiene"
-        ref="petRef"
-        @morreu="handleGameOver"
-      />
-    </div>
-    <div class="pet-status">
-      <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'" />
-      <PetStatus
-        :value="diversao"
-        icon="gamepad"
-        @click="statusAtual = 'diversao'"
-      />
-      <PetStatus
-        :value="higiene"
-        icon="shower"
-        @click="statusAtual = 'higiene'"
-      />
-      <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
-    </div>
+      <div class="pet-title">Pet Your Moreno</div>
 
-    <Background :dormindo="statusAtual === 'sono'" />
+      <button class="minigame-botao" @click="entrarMiniGame">🎮 Jogar MiniGame</button>
 
-    <div v-if="gameOver" class="game-over-overlay">
-      <div class="game-over-content">
-        <h1>Game Over</h1>
-        <button @click="reiniciarJogo">Reiniciar</button>
+      <div class="score-marker">
+        🪙 {{ score }}
+      </div>
+      <div class="pet-sprite">
+        <Moreno
+            :fome="fome"
+            :diversao="diversao"
+            :sono="sono"
+            :higiene="higiene"
+            ref="petRef"
+            @morreu="handleGameOver"
+        />
+      </div>
+      <div class="pet-status">
+        <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'"/>
+        <PetStatus
+            :value="diversao"
+            icon="gamepad"
+            @click="statusAtual = 'diversao'"
+        />
+        <PetStatus
+            :value="higiene"
+            icon="shower"
+            @click="statusAtual = 'higiene'"
+        />
+        <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'"/>
+      </div>
+
+      <Background :dormindo="statusAtual === 'sono'"/>
+
+      <div v-if="gameOver" class="game-over-overlay">
+        <div class="game-over-content">
+          <h1>Game Over</h1>
+          <button @click="reiniciarJogo">Reiniciar</button>
+        </div>
       </div>
     </div>
+
+    <PetActions
+        ref="actionRef"
+        :status="statusAtual"
+        :item-equipado="itemEquipado"
+    />
+
+    <div class="store-icon">
+      <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1"/>
+    </div>
+
+    <Store
+        v-if="storeStatus === 1"
+        :storeStatus="storeStatus"
+        :produtos="produtos"
+        @equiparItem="itemEquipado = $event"
+        @comprar="comprarProduto"
+        @fechar="storeStatus = 0"
+    ></Store>
   </div>
 
-  <PetActions
-    ref="actionRef"
-    :status="statusAtual"
-    :item-equipado="itemEquipado"
-  />
+  <MiniGame v-else @voltar="mostrandoMiniGame = false" @score="atualizarScore"/>
 
-  <div class="store-icon">
-    <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1" />
-  </div>
-
-  <Store
-    v-if="storeStatus === 1"
-    :storeStatus="storeStatus"
-    :produtos="produtos"
-    @equiparItem="itemEquipado = $event"
-    @comprar="comprarProduto"
-    @fechar="storeStatus = 0"
-  ></Store>
 </template>
 
 <style scoped>
@@ -230,6 +261,7 @@ onMounted(async () => {
   cursor: pointer;
   color: white;
   transition: transform 0.2s ease;
+  z-index: 1001;
 }
 
 .voltar-botao:hover {
@@ -292,6 +324,47 @@ onMounted(async () => {
 }
 
 .store-icon:active {
+  transform: scale(0.95);
+}
+
+.score-marker {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 2px solid white;
+  z-index: 1000;
+  font-family: 'Fredoka', sans-serif;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.minigame-botao {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  background: #ffb703;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-family: 'Fredoka', sans-serif;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
+  z-index: 1001;
+}
+
+.minigame-botao:hover {
+  transform: scale(1.1);
+}
+
+.minigame-botao:active {
   transform: scale(0.95);
 }
 </style>

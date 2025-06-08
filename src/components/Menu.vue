@@ -1,69 +1,45 @@
 <script setup>
 import {ref} from 'vue'
 import Pet from './Pet.vue'
-import MiniGame from './MiniGame.vue'
 import gifMoreno from './imagens/morenoPilotando.gif'
 
 const telaAtual = ref('menu')
 
+const scoreTotal = ref(0);
+
 function iniciarJogo() {
   telaAtual.value = 'jogo'
 }
-
-function iniciarMiniGame() {
-  telaAtual.value = 'minigame'
-}
 </script>
-
-
 <template>
   <div>
-    <div v-if="!jogando" class="menu-fundo">
-      <div v-if="telaAtual === 'menu'" class="menu-fundo">
-        <img :src=gifMoreno class="gifDoMoreno">
-        <h1 class="menu-title">PET YOUR MORENO</h1>
-        <div class="menu-linha"></div>
-        <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
-        <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
 
-
-        <button class="menu-botao" @click="iniciarJogo">
-          🎮 JOGAR
-        </button>
-        <button class="menu-botao">
-          ⚙️ OPÇÕES
-        </button>
-
-
-      </div>
-    </div>
-
-    <div v-else>
-      <Pet @voltarMenu="jogando = false"/>
+    <div v-if="telaAtual === 'menu'" class="menu-fundo">
+      <img :src=gifMoreno class="gifDoMoreno">
+      <h1 class="menu-title">PET YOUR MORENO</h1>
       <div class="menu-linha"></div>
       <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
       <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
 
+
       <button class="menu-botao" @click="iniciarJogo">
         🎮 JOGAR
-      </button>
-      <button class="menu-botao" @click="iniciarMiniGame">
-        🎯 MINI GAME
       </button>
       <button class="menu-botao">
         ⚙️ OPÇÕES
       </button>
     </div>
 
-    <Pet v-if="telaAtual === 'jogo'" @voltarMenu="telaAtual = 'menu'"/>
-    <MiniGame v-else-if="telaAtual === 'minigame'" @back="telaAtual = 'menu'"/>
+    <Pet
+        v-if="telaAtual === 'jogo'"
+        :score="scoreTotal"
+        @voltarMenu="telaAtual = 'menu'"
+    />
   </div>
 </template>
 
-
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@500&family=Nunito:wght@400&display=swap");
-
 
 .menu-fundo {
   background: linear-gradient(#219ebc, #9acbe2);
@@ -110,7 +86,6 @@ function iniciarMiniGame() {
   animation: flutuar 6s ease-in-out infinite;
 }
 
-
 .menu-fundo::before {
   content: '';
   position: absolute;
@@ -150,14 +125,12 @@ function iniciarMiniGame() {
   transition: background-color 0.3s ease, transform 0.3s ease;
   background: linear-gradient(45deg, #8ecae6, #83daf0);
   box-shadow: 4px 4px 10px rgba(2, 48, 71, 0.2);
-
 }
 
 .menu-botao:hover {
   background-color: #83daf0;
   transform: scale(1.05) rotate(-2deg);
   animation: pulse 0.6s infinite;
-
 }
 
 .menu-botao:active {
@@ -194,5 +167,4 @@ function iniciarMiniGame() {
   z-index: 2;
   display: flex;
 }
-
 </style>
