@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick, watch } from "vue";
+import { onMounted, ref, nextTick, watch, onUnmounted } from "vue";
 import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
@@ -76,8 +76,55 @@ function reiniciarJogo() {
   window.location.reload();
 }
 
+function clickAbrir() {
+  const audio = new Audio(
+    new URL("./Sons/OpenClick.mp3", import.meta.url).href
+  );
+  audio.play();
+}
+
+let musicaFundo;
+
+function somComendo() {
+  const audio = new Audio(new URL("./Sons/comendo.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somNah() {
+  const audio = new Audio(new URL("./Sons/Nah.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somDormindo() {
+  const audio = new Audio(new URL("./Sons/Thinking.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somMaligno() {
+  const audio = new Audio(
+    new URL("./Sons/Evil Laugh.mp3", import.meta.url).href
+  );
+  audio.play();
+}
+
+function abrirLoja() {
+  storeStatus.value = 1;
+  clickAbrir();
+}
+
 onMounted(() => {
+  musicaFundo = new Audio(new URL("./Sons/TrapSong.mp3", import.meta.url).href);
+  musicaFundo.loop = true;
+  musicaFundo.volume = 0.5;
+  musicaFundo.play();
   setupPetListeners();
+});
+
+onUnmounted(() => {
+  if (musicaFundo) {
+    musicaFundo.pause();
+    musicaFundo = null;
+  }
 });
 
 watch(mostrandoMiniGame, async (novoValor) => {
@@ -120,12 +167,16 @@ function setupPetListeners() {
         const alimento = produtos.value.find(
           (p) => p.imagem === itemEquipado.value.imagem
         );
-        if (alimento && alimento.owned > 0) {
+        if (alimento && alimento.owned > 0 && fome.value < 100) {
+          somComendo();
           alimento.owned--;
           fome.value += alimento.preco * 2;
+        } else {
+          somNah();
         }
         break;
       case "sono":
+        somDormindo();
         sono.value += 10;
         break;
     }
@@ -137,9 +188,15 @@ setInterval(() => {
     switch (statusAtual.value) {
       case "diversao":
         diversao.value += 1;
+        if (diversao.value > 100) {
+          diversao.value = 100;
+        }
         break;
       case "higiene":
         higiene.value += 1;
+        if (higiene.value > 100) {
+          higiene.value = 100;
+        }
         break;
     }
   }
@@ -200,7 +257,7 @@ defineProps({
 
       <div v-if="gameOver" class="game-over-overlay">
         <div class="game-over-content">
-          <h1>Game Over</h1>
+          <h1>VOCÊ ASSASSINOU MORENO</h1>
           <button @click="reiniciarJogo">Reiniciar</button>
         </div>
       </div>
@@ -213,7 +270,7 @@ defineProps({
     />
 
     <div class="store-icon">
-      <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1" />
+      <font-awesome-icon :icon="['fas', 'store']" @click="abrirLoja" />
     </div>
 
     <Store

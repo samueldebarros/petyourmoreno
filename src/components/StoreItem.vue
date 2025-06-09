@@ -6,11 +6,20 @@ import { onMounted, ref, computed } from "vue";
 const emit = defineEmits(["equipar"]);
 
 function comprarItem() {
+  clickAbrir();
   emit("comprar", 1);
 }
 
 function equiparItem() {
+  clickAbrir();
   emit("equipar", { nome: props.nome, imagem: props.imagem });
+}
+
+function clickAbrir() {
+  const audio = new Audio(
+    new URL("./Sons/OpenClick.mp3", import.meta.url).href
+  );
+  audio.play();
 }
 
 const props = defineProps({

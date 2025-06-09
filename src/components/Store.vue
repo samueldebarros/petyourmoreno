@@ -10,6 +10,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["fechar", "equiparItem"]);
+
+function clickAbrir() {
+  const audio = new Audio(
+    new URL("./Sons/OpenClick.mp3", import.meta.url).href
+  );
+  audio.play();
+}
 </script>
 
 <template>
