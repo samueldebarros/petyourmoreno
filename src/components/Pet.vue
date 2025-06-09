@@ -1,18 +1,23 @@
 <script setup>
-import {onMounted, ref, nextTick} from "vue";
+import { onMounted, ref, nextTick, watch } from "vue";
 import PetStatus from "./PetStatus.vue";
 import Moreno from "./Moreno.vue";
 import Background from "./Background.vue";
 import PetActions from "./PetActions.vue";
 import Store from "./Store.vue";
-import MiniGame from './MiniGame.vue'
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import MiniGame from "./MiniGame.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const storeStatus = ref(0);
-const itemEquipado = ref({imagem: "lemon", nome: "Limão"});
+const itemEquipado = ref({ imagem: "lemon", nome: "Limão" });
 
 function comprarProduto(index, qtd) {
-  produtos.value[index].owned += qtd;
+  if (score.value >= produtos.value[index].preco) {
+    produtos.value[index].owned += qtd;
+    score.value -= produtos.value[index].preco;
+  } else {
+    alert("Você não tem moedas suficientes para comprar este item.");
+  }
 }
 
 const mostrandoMiniGame = ref(false);
@@ -22,13 +27,13 @@ function entrarMiniGame() {
 }
 
 const produtos = ref([
-  {nome: "Limão", imagem: "lemon", preco: 5, owned: 0},
-  {nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0},
-  {nome: "Cookie", imagem: "cookie", preco: 15, owned: 0},
-  {nome: "Sorvete", imagem: "ice-cream", preco: 20, owned: 0},
-  {nome: "Pizza", imagem: "pizza-slice", preco: 25, owned: 0},
-  {nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0},
-  {nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0},
+  { nome: "Limão", imagem: "lemon", preco: 5, owned: 0 },
+  { nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0 },
+  { nome: "Cookie", imagem: "cookie", preco: 15, owned: 0 },
+  { nome: "Sorvete", imagem: "ice-cream", preco: 20, owned: 0 },
+  { nome: "Pizza", imagem: "pizza-slice", preco: 25, owned: 0 },
+  { nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0 },
+  { nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0 },
 ]);
 
 const statusAtual = ref("fome");
@@ -61,7 +66,7 @@ function menosStatus(status1, status2, status3, status4) {
   status4.value -= 1;
 }
 
-setInterval(() => menosStatus(sono, fome, diversao, higiene), 500);
+setInterval(() => menosStatus(sono, fome, diversao, higiene), 1500);
 
 function handleGameOver() {
   gameOver.value = true;
@@ -71,14 +76,23 @@ function reiniciarJogo() {
   window.location.reload();
 }
 
-onMounted(async () => {
-  await nextTick();
+onMounted(() => {
+  setupPetListeners();
+});
 
+watch(mostrandoMiniGame, async (novoValor) => {
+  if (!novoValor) {
+    await nextTick();
+    setupPetListeners();
+  }
+});
+
+function setupPetListeners() {
   const actionEl = actionRef.value?.actionItem;
   const petEl = petRef.value?.morenoPet;
 
   if (!actionEl || !petEl) {
-    console.error("Referências não carregadas:", {actionEl, petEl});
+    console.error("Referências não carregadas:", { actionEl, petEl });
     return;
   }
 
@@ -103,27 +117,33 @@ onMounted(async () => {
 
     switch (statusAtual.value) {
       case "fome":
-        fome.value += 20;
+        const alimento = produtos.value.find(
+          (p) => p.imagem === itemEquipado.value.imagem
+        );
+        if (alimento && alimento.owned > 0) {
+          alimento.owned--;
+          fome.value += alimento.preco * 2;
+        }
         break;
       case "sono":
-        sono.value += 20;
+        sono.value += 10;
         break;
     }
   });
+}
 
-  setInterval(() => {
-    if (isHovering.value) {
-      switch (statusAtual.value) {
-        case "diversao":
-          diversao.value += 1;
-          break;
-        case "higiene":
-          higiene.value += 1;
-          break;
-      }
+setInterval(() => {
+  if (isHovering.value) {
+    switch (statusAtual.value) {
+      case "diversao":
+        diversao.value += 1;
+        break;
+      case "higiene":
+        higiene.value += 1;
+        break;
     }
-  }, 100);
-});
+  }
+}, 100);
 
 defineProps({
   score: {
@@ -137,46 +157,46 @@ defineProps({
   <div v-if="!mostrandoMiniGame">
     <div class="pet-fundo">
       <button
-          class="voltar-botao"
-          @click="voltarParaMenu"
-          aria-label="Voltar ao menu"
+        class="voltar-botao"
+        @click="voltarParaMenu"
+        aria-label="Voltar ao menu"
       >
         ⚙️
       </button>
 
       <div class="pet-title">Pet Your Moreno</div>
 
-      <button class="minigame-botao" @click="entrarMiniGame">🎮 Jogar MiniGame</button>
+      <button class="minigame-botao" @click="entrarMiniGame">
+        🎮 Jogar MiniGame
+      </button>
 
-      <div class="score-marker">
-        🪙 {{ score }}
-      </div>
+      <div class="score-marker">🪙 {{ score }}</div>
       <div class="pet-sprite">
         <Moreno
-            :fome="fome"
-            :diversao="diversao"
-            :sono="sono"
-            :higiene="higiene"
-            ref="petRef"
-            @morreu="handleGameOver"
+          :fome="fome"
+          :diversao="diversao"
+          :sono="sono"
+          :higiene="higiene"
+          ref="petRef"
+          @morreu="handleGameOver"
         />
       </div>
       <div class="pet-status">
-        <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'"/>
+        <PetStatus :value="fome" icon="burger" @click="statusAtual = 'fome'" />
         <PetStatus
-            :value="diversao"
-            icon="gamepad"
-            @click="statusAtual = 'diversao'"
+          :value="diversao"
+          icon="gamepad"
+          @click="statusAtual = 'diversao'"
         />
         <PetStatus
-            :value="higiene"
-            icon="shower"
-            @click="statusAtual = 'higiene'"
+          :value="higiene"
+          icon="shower"
+          @click="statusAtual = 'higiene'"
         />
-        <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'"/>
+        <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
       </div>
 
-      <Background :dormindo="statusAtual === 'sono'"/>
+      <Background :dormindo="statusAtual === 'sono'" />
 
       <div v-if="gameOver" class="game-over-overlay">
         <div class="game-over-content">
@@ -187,27 +207,30 @@ defineProps({
     </div>
 
     <PetActions
-        ref="actionRef"
-        :status="statusAtual"
-        :item-equipado="itemEquipado"
+      ref="actionRef"
+      :status="statusAtual"
+      :item-equipado="itemEquipado"
     />
 
     <div class="store-icon">
-      <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1"/>
+      <font-awesome-icon :icon="['fas', 'store']" @click="storeStatus = 1" />
     </div>
 
     <Store
-        v-if="storeStatus === 1"
-        :storeStatus="storeStatus"
-        :produtos="produtos"
-        @equiparItem="itemEquipado = $event"
-        @comprar="comprarProduto"
-        @fechar="storeStatus = 0"
+      v-if="storeStatus === 1"
+      :storeStatus="storeStatus"
+      :produtos="produtos"
+      @equiparItem="itemEquipado = $event"
+      @comprar="comprarProduto"
+      @fechar="storeStatus = 0"
     ></Store>
   </div>
 
-  <MiniGame v-else @voltar="mostrandoMiniGame = false" @score="atualizarScore"/>
-
+  <MiniGame
+    v-else
+    @voltar="mostrandoMiniGame = false"
+    @score="atualizarScore"
+  />
 </template>
 
 <style scoped>
@@ -339,7 +362,7 @@ defineProps({
   border-radius: 12px;
   border: 2px solid white;
   z-index: 1000;
-  font-family: 'Fredoka', sans-serif;
+  font-family: "Fredoka", sans-serif;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -354,7 +377,7 @@ defineProps({
   border-radius: 12px;
   color: white;
   cursor: pointer;
-  font-family: 'Fredoka', sans-serif;
+  font-family: "Fredoka", sans-serif;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
   z-index: 1001;
