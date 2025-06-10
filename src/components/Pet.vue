@@ -224,10 +224,12 @@ defineProps({
       <div class="pet-title">Pet Your Moreno</div>
 
       <button class="minigame-botao" @click="entrarMiniGame">
-        🎮 Jogar MiniGame
+        🎮 Minigame
       </button>
 
-      <div class="score-marker">🪙 {{ score }}</div>
+      <div class="score-marker">
+        <font-awesome-icon :icon="['fas', 'coins']" />
+       {{ score }}</div>
       <div class="pet-sprite">
         <Moreno
           :fome="fome"
@@ -253,7 +255,11 @@ defineProps({
         <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
       </div>
 
-      <Background :dormindo="statusAtual === 'sono'" />
+      <Background 
+      :dormindo="statusAtual === 'sono'" 
+      :banho="statusAtual === 'higiene'"
+      :divertindo="statusAtual === 'diversao'"
+      />
 
       <div v-if="gameOver" class="game-over-overlay">
         <div class="game-over-content">
@@ -426,10 +432,10 @@ defineProps({
 .minigame-botao {
   position: absolute;
   top: 70px;
-  right: 20px;
+  right: 10px;
   padding: 10px 20px;
   font-size: 18px;
-  background: #ffb703;
+  background: #ADD8E6;
   border: none;
   border-radius: 12px;
   color: white;
@@ -438,6 +444,7 @@ defineProps({
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.2s ease;
   z-index: 1001;
+  color: black;
 }
 
 .minigame-botao:hover {
