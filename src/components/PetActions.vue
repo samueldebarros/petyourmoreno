@@ -10,6 +10,7 @@ const props = defineProps({
   status: String,
   itemEquipado: Object,
 });
+
 const actionImage = computed(() => {
   if (
     props.status === "fome" &&

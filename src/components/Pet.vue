@@ -8,6 +8,8 @@ import Store from "./Store.vue";
 import MiniGame from "./MiniGame.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
+// Variaveis e funções da Loja ----------------------------------------
+
 const storeStatus = ref(0);
 const itemEquipado = ref({ imagem: "lemon", nome: "Limão" });
 
@@ -20,12 +22,6 @@ function comprarProduto(index, qtd) {
   }
 }
 
-const mostrandoMiniGame = ref(false);
-
-function entrarMiniGame() {
-  mostrandoMiniGame.value = true;
-}
-
 const produtos = ref([
   { nome: "Limão", imagem: "lemon", preco: 5, owned: 0 },
   { nome: "Pão", imagem: "bread-slice", preco: 10, owned: 0 },
@@ -35,6 +31,39 @@ const produtos = ref([
   { nome: "Hamburguer", imagem: "burger", preco: 30, owned: 0 },
   { nome: "Moto", imagem: "motorcycle", preco: 999, owned: 0 },
 ]);
+
+//-------------------------------------------------------------------------
+
+// Variaveis e funções do Minigame e controle de Janelas
+
+const mostrandoMiniGame = ref(false);
+const score = ref(0);
+const emit = defineEmits(["voltarMenu", "entrarMiniGame"]);
+const gameOver = ref(false);
+
+function atualizarScore(novaPontuacao) {
+  score.value += novaPontuacao;
+}
+
+function entrarMiniGame() {
+  mostrandoMiniGame.value = true;
+}
+
+function voltarParaMenu() {
+  emit("voltarMenu");
+}
+
+function handleGameOver() {
+  gameOver.value = true;
+}
+
+function reiniciarJogo() {
+  window.location.reload();
+}
+
+//-----------------------------------------------------------------------------
+
+// Variaveis e funções do Pet e seus Status
 
 const statusAtual = ref("fome");
 const actionRef = ref(null);
@@ -46,19 +75,6 @@ const fome = ref(100);
 const diversao = ref(100);
 const higiene = ref(100);
 
-const score = ref(0);
-
-function atualizarScore(novaPontuacao) {
-  score.value += novaPontuacao;
-}
-
-const emit = defineEmits(["voltarMenu", "entrarMiniGame"]);
-const gameOver = ref(false);
-
-function voltarParaMenu() {
-  emit("voltarMenu");
-}
-
 function menosStatus(status1, status2, status3, status4) {
   status1.value -= 1;
   status2.value -= 1;
@@ -68,71 +84,7 @@ function menosStatus(status1, status2, status3, status4) {
 
 setInterval(() => menosStatus(sono, fome, diversao, higiene), 1500);
 
-function handleGameOver() {
-  gameOver.value = true;
-}
-
-function reiniciarJogo() {
-  window.location.reload();
-}
-
-function clickAbrir() {
-  const audio = new Audio(
-    new URL("./Sons/OpenClick.mp3", import.meta.url).href
-  );
-  audio.play();
-}
-
-let musicaFundo;
-
-function somComendo() {
-  const audio = new Audio(new URL("./Sons/comendo.mp3", import.meta.url).href);
-  audio.play();
-}
-
-function somNah() {
-  const audio = new Audio(new URL("./Sons/Nah.mp3", import.meta.url).href);
-  audio.play();
-}
-
-function somDormindo() {
-  const audio = new Audio(new URL("./Sons/Thinking.mp3", import.meta.url).href);
-  audio.play();
-}
-
-function somMaligno() {
-  const audio = new Audio(
-    new URL("./Sons/Evil Laugh.mp3", import.meta.url).href
-  );
-  audio.play();
-}
-
-function abrirLoja() {
-  storeStatus.value = 1;
-  clickAbrir();
-}
-
-onMounted(() => {
-  musicaFundo = new Audio(new URL("./Sons/TrapSong.mp3", import.meta.url).href);
-  musicaFundo.loop = true;
-  musicaFundo.volume = 0.5;
-  musicaFundo.play();
-  setupPetListeners();
-});
-
-onUnmounted(() => {
-  if (musicaFundo) {
-    musicaFundo.pause();
-    musicaFundo = null;
-  }
-});
-
-watch(mostrandoMiniGame, async (novoValor) => {
-  if (!novoValor) {
-    await nextTick();
-    setupPetListeners();
-  }
-});
+// Função das ações com o Pet
 
 function setupPetListeners() {
   const actionEl = actionRef.value?.actionItem;
@@ -183,6 +135,8 @@ function setupPetListeners() {
   });
 }
 
+// Aumenta o status de diversão e higiene quando o Pet está sendo interagido
+
 setInterval(() => {
   if (isHovering.value) {
     switch (statusAtual.value) {
@@ -201,6 +155,75 @@ setInterval(() => {
     }
   }
 }, 100);
+
+//-----------------------------------------------------------------------------
+// Sons e musica
+
+let musicaFundo;
+
+function clickAbrir() {
+  const audio = new Audio(
+    new URL("./Sons/OpenClick.mp3", import.meta.url).href
+  );
+  audio.play();
+}
+
+function somComendo() {
+  const audio = new Audio(new URL("./Sons/comendo.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somNah() {
+  const audio = new Audio(new URL("./Sons/Nah.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somDormindo() {
+  const audio = new Audio(new URL("./Sons/Thinking.mp3", import.meta.url).href);
+  audio.play();
+}
+
+function somMaligno() {
+  const audio = new Audio(
+    new URL("./Sons/Evil Laugh.mp3", import.meta.url).href
+  );
+  audio.play();
+}
+
+function abrirLoja() {
+  storeStatus.value = 1;
+  clickAbrir();
+}
+
+//---------------------------------------------------------------------
+
+// Onmounted (Toca a musica e inicia as interações com o Pet)
+
+onMounted(() => {
+  musicaFundo = new Audio(new URL("./Sons/TrapSong.mp3", import.meta.url).href);
+  musicaFundo.loop = true;
+  musicaFundo.volume = 0.5;
+  musicaFundo.play();
+  setupPetListeners();
+});
+
+// OnUnmounted (Para a musica)
+
+onUnmounted(() => {
+  if (musicaFundo) {
+    musicaFundo.pause();
+    musicaFundo = null;
+  }
+});
+
+// Watch reativa as ações do Pet quando o minigame é fechado
+
+watch(mostrandoMiniGame, async (novoValor) => {
+  if (!novoValor) {
+    await nextTick();
+    setupPetListeners();
+  }
+});
 
 defineProps({
   score: {
