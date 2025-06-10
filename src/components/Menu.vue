@@ -32,7 +32,6 @@ function continuarParaJogo() {
       ></div>
 
       <button class="menu-botao" @click="iniciarJogo">🎮 JOGAR</button>
-      <button class="menu-botao">⚙️ OPÇÕES</button>
     </div>
 
     <div v-else-if="telaAtual === 'historia'" class="menu-fundo">
