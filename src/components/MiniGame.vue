@@ -95,7 +95,7 @@ onUnmounted(() => {
 
     <div v-if="gameOver" class="mini-game-end game-over">
       <h3>Game Over!</h3>
-      <p>Moreno não gosta de bicicletas 😖</p>
+      <p>😖</p>
       <button @click="emit('voltar')">Voltar</button>
     </div>
   </div>

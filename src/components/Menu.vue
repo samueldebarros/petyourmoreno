@@ -1,39 +1,50 @@
 <script setup>
-import {ref} from 'vue'
-import Pet from './Pet.vue'
-import gifMoreno from './imagens/morenoPilotando.gif'
+import { ref } from "vue";
+import Pet from "./Pet.vue";
+import gifMoreno from "./imagens/morenoPilotando.gif";
+import historiaMoreno from "./imagens/historiaMoreno.gif";
 
-const telaAtual = ref('menu')
+const telaAtual = ref("menu");
 
 const scoreTotal = ref(0);
 
 function iniciarJogo() {
-  telaAtual.value = 'jogo'
+  telaAtual.value = "historia";
+}
+
+function continuarParaJogo() {
+  telaAtual.value = "jogo";
 }
 </script>
 <template>
   <div>
-
     <div v-if="telaAtual === 'menu'" class="menu-fundo">
-      <img :src=gifMoreno class="gifDoMoreno">
+      <img :src="gifMoreno" class="gifDoMoreno" />
       <h1 class="menu-title">PET YOUR MORENO</h1>
       <div class="menu-linha"></div>
-      <div class="bolha" style="width: 200px; height: 200px; top: 10%; left: 20%;"></div>
-      <div class="bolha" style="width: 150px; height: 150px; bottom: 15%; right: 10%;"></div>
+      <div
+        class="bolha"
+        style="width: 200px; height: 200px; top: 10%; left: 20%"
+      ></div>
+      <div
+        class="bolha"
+        style="width: 150px; height: 150px; bottom: 15%; right: 10%"
+      ></div>
 
+      <button class="menu-botao" @click="iniciarJogo">🎮 JOGAR</button>
+      <button class="menu-botao">⚙️ OPÇÕES</button>
+    </div>
 
-      <button class="menu-botao" @click="iniciarJogo">
-        🎮 JOGAR
-      </button>
-      <button class="menu-botao">
-        ⚙️ OPÇÕES
-      </button>
+    <div v-else-if="telaAtual === 'historia'" class="menu-fundo">
+      <img :src="historiaMoreno" class="gifDoMoreno" />
+      <h2 class="menu-title">Moreno se lascou! Alguem precisa cuidar dele</h2>
+      <button class="menu-botao" @click="continuarParaJogo">Continuar</button>
     </div>
 
     <Pet
-        v-if="telaAtual === 'jogo'"
-        :score="scoreTotal"
-        @voltarMenu="telaAtual = 'menu'"
+      v-if="telaAtual === 'jogo'"
+      :score="scoreTotal"
+      @voltarMenu="telaAtual = 'menu'"
     />
   </div>
 </template>
@@ -87,7 +98,7 @@ function iniciarJogo() {
 }
 
 .menu-fundo::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 300px;
   height: 300px;
@@ -118,7 +129,7 @@ function iniciarJogo() {
   font-family: "Fredoka", sans-serif;
   font-size: 20px;
   padding: 10px;
-  border: 2px solid #219ebc;;
+  border: 2px solid #219ebc;
   border-radius: 10px;
   color: #023047;
   cursor: pointer;

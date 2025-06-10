@@ -229,7 +229,8 @@ defineProps({
 
       <div class="score-marker">
         <font-awesome-icon :icon="['fas', 'coins']" />
-       {{ score }}</div>
+        {{ score }}
+      </div>
       <div class="pet-sprite">
         <Moreno
           :fome="fome"
@@ -255,10 +256,10 @@ defineProps({
         <PetStatus :value="sono" icon="bed" @click="statusAtual = 'sono'" />
       </div>
 
-      <Background 
-      :dormindo="statusAtual === 'sono'" 
-      :banho="statusAtual === 'higiene'"
-      :divertindo="statusAtual === 'diversao'"
+      <Background
+        :dormindo="statusAtual === 'sono'"
+        :banho="statusAtual === 'higiene'"
+        :divertindo="statusAtual === 'diversao'"
       />
 
       <div v-if="gameOver" class="game-over-overlay">
@@ -435,7 +436,7 @@ defineProps({
   right: 10px;
   padding: 10px 20px;
   font-size: 18px;
-  background: #ADD8E6;
+  background: #add8e6;
   border: none;
   border-radius: 12px;
   color: white;
